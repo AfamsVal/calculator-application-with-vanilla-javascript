@@ -3,11 +3,11 @@ const getHistory = () => document.querySelector("#history-value").innerText;
 const printHistory = (num) =>
   (document.querySelector("#history-value").innerText = num);
 
-const getOutput = (num) => document.querySelector("#output-value").innerText;
+const getOutput = () => document.querySelector("#output-value").innerText;
 
 const printOutput = (num) => {
-  if (num == "") {
-    document.getElementById("output-value").innerText = num;
+  if (num) {
+    document.getElementById("output-value").innerText = num == "00" ? 0 : num;
   } else {
     document.getElementById("output-value").innerText = getFormatedNumber(num);
   }
@@ -19,11 +19,17 @@ const getFormatedNumber = (num) => {
   let value = n.toLocaleString("en");
   return value;
 };
+
+
 const reverseNumberFormat = (num) => {
   return Number(num.replace(/,/g, ""));
 };
+
+
+
 const operator = document.getElementsByClassName("operator");
 let output;
+let history;
 for (let i = 0; i < operator.length; i++) {
   operator[i].addEventListener("click", function () {
     if (this.id == "clear") {
@@ -38,17 +44,20 @@ for (let i = 0; i < operator.length; i++) {
       }
     } else {
       output = getOutput();
-      let history = getHistory();
-      if (output == "" && history != "") {
-        if (isNaN(history[history.length - 1])) {
-          history = history.substr(0, history.length - 1);
-        }
-      }
+      history = getHistory();
+	  //if(history[history.length - 1] == this.id) return;
+	  if(output == "0" && history =="") return;
+      //if (output == "" && history != "") {
+		//  console.log(45)
+       // if (isNaN(history[history.length - 1])) {
+       //   history = history.substr(0, history.length - 1);
+       // }
+     // }
       if (output != "" || history != "") {
         output = output == "" ? output : reverseNumberFormat(output);
         history = history + output;
         if (this.id == "=") {
-          const result = eval(history);
+          const result = isNaN(eval(history)) || eval(history) == "Infinity" ? 0 :  eval(history);
           printOutput(result);
           printHistory("");
         } else {
@@ -60,6 +69,8 @@ for (let i = 0; i < operator.length; i++) {
     }
   });
 }
+
+
 
 let number = document.getElementsByClassName("number");
 for (let i = 0; i < number.length; i++) {
